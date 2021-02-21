@@ -3,14 +3,14 @@ defmodule WitchcraftersPlay.Tree23 do
 
   import Algae
   use Witchcraft, except: [to_list: 1]
-  alias WitchcraftersPlay.Tree23.{Empty, Node2, Node3, Node4, Leaf}
+  alias WitchcraftersPlay.Tree23.{Empty, Node1, Node2, Node3, Node4, Leaf}
 
   defsum do
     defdata(Empty :: none())
 
     defdata Node1 do
       key :: any()
-      node :: any()
+      node :: Tree23.t() \\ Empty.new()
     end
 
     defdata Node2 do
@@ -199,4 +199,61 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
-end
+  def delete(%Empty{}, _) do
+    %Empty{}
+  end
+
+  def delete(tree = %Leaf{key: key, value: _}, delete_key) do
+    if(compare(key, delete_key) == :equal) do
+      %Empty{}
+    else
+      tree
+    end
+  end
+
+  def delete(tree = %Node2{left: %Leaf{} = left, right: %Leaf{} = right, lower_key: lk, max_right_key: mrk}, delete_key) do
+    cond do
+      compare(delete_key, lk) == :equal ->
+        Node1.new(mrk, right)
+      compare(delete_key, mrk) == :equal ->
+        Node1.new(lk, left)
+      true  -> tree
+    end
+  end
+
+  def delete(tree = %Node3{left: %Leaf{} = left, middle: %Leaf{} = middle, right: %Leaf{} = right, lower_key: lk, upper_key: uk, max_right_key: mrk}, delete_key) do
+    cond do
+      compare(delete_key, lk) == :equal -> Node2.new(uk, mrk, middle, right)
+      compare(delete_key, uk) == :equal -> Node2.new(lk, mrk, left, right)
+      compare(delete_key, mrk) == :equal -> Node2.new(lk, uk, left, middle)
+      true -> tree
+    end
+  end
+
+  def delete(tree = %Node2{left: left, right: right, lower_key: lower_key, max_right_key: _}, delete_key) do
+    key_comparison = compare(delete_key, lower_key)
+    if key_comparison == :lesser || key_comparison == :equal do
+      case returned_node = delete(left, delete_key) do
+        %Node1{key: key, node: node} -> case right  do
+                                          %Node3{left: l, middle: m, right: r, lower_key: lk, upper_key: uk, max_right_key: mrk} ->
+                                            Node2.new(lk, mrk, Node2.new(key, lk, node, l), Node2.new(uk, mrk, m, r))
+                                          %Node2{left: l, right: r, lower_key: lk, max_right_key: mrk} ->
+                                             Node1.new(mrk, Node3.new(key, lk, mrk, node, l, r))
+                                        end
+          _ -> %{tree | left: returned_node, lower_key: returned_node.max_right_key}
+      end
+    else
+      case returned_node = delete(right, delete_key) do
+        %Node1{key: key, node: node} -> case left do
+                                           %Node3{left: l, middle: m, right: r, lower_key: lk, upper_key: uk, max_right_key: mrk} ->
+                                              Node2.new(uk, node.key, Node2.new(lk, uk, l, m), Node2.new(mrk, node.key, r, node))
+                                           %Node2{left: l, right: r, lower_key: lk, max_right_key: mrk} ->
+                                              Node1.new(key, Node3.new(lk, mrk, key, l, r, node))
+                                        end
+        _ -> %{tree | right: returned_node, max_right_key: returned_node.max_right_key}
+    end
+  end
+  end
+
+
+  end
