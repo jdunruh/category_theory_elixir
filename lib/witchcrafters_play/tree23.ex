@@ -235,6 +235,13 @@ defmodule WitchcraftersPlay.Tree23 do
     Node3.new(left.upper_key, middle.key, right.max_right_key ,Node2.new(left.lower_key, left.upper_key, left.left, left.middle), Node2.new(left.max_right_key, middle.key,left.right, middle.node), right)
   end
 
+  def delete(tree, delete_key) do
+    case new_tree = delete_prime(tree, delete_key) do
+      %Node1{} -> new_tree.node
+      _ -> new_tree
+    end
+  end
+
   def delete_prime(%Empty{}, _) do
     %Empty{}
   end
