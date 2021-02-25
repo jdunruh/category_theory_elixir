@@ -199,6 +199,42 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
+  def descent_direction(%Node3{lower_key: lower_key, upper_key: upper_key, max_right_key: max_right_key}, key) do
+    case {compare(key, lower_key), compare(key, upper_key), compare(key, max_right_key)} do
+      {:lesser, _, _} -> :left
+      {:equal, _, _} -> :left
+      {_, :lesser, _} -> :middle
+      {_, :equal, _} -> :middle
+      _ -> :right
+    end
+  end
+
+  def rebalance_delete_3(%Node1{} = left, %Node2{} = middle, right) do
+    Node2.new(middle.max_right_key, right.max_right_key, Node3.new(left.key, middle.lower_key, middle.max_right_key, left.node, middle.left, middle.right), right)
+  end
+
+  def rebalance_delete_3(%Node1{} = left, %Node3{} = middle, right) do
+    Node3.new(middle.lower_key, middle.max_right_key, right.max_right_key ,Node2.new(left.key, middle.lower_key, left.node, middle.left),
+      Node2.new(middle.upper_key, middle.max_right_key,middle.middle, middle.right), right)
+  end
+
+  def rebalance_delete_3(left, %Node2{} = middle, %Node1{} = right) do
+    Node2.new(left.max_right_key, right.key, left, Node3.new(middle.lower_key, middle.max_right_key, right.key, middle.left, middle.right, right.node))
+  end
+
+  def rebalance_delete_3(left, %Node3{} = middle, %Node1{} = right) do
+    Node3.new(left.max_right_key, middle.upper_key, right.key, left, Node2.new(middle.lower_key, middle.upper_key, middle.left, middle.middle),
+      Node2.new(middle.max_right_key, right.key, middle.right, right.node))
+  end
+
+  def rebalance_delete_3(%Node2{} = left, %Node1{} = middle, right) do
+    Node2.new(middle.key, right.max_right_key, Node3.new(left.lower_key, left.max_right_key, middle.key, left.left, left.right, middle.node), right)
+  end
+
+  def rebalance_delete_3(%Node3{} = left, %Node1{} = middle, right) do
+    Node3.new(left.upper_key, middle.key, right.max_right_key ,Node2.new(left.lower_key, left.upper_key, left.left, left.middle), Node2.new(left.max_right_key, middle.key,left.right, middle.node), right)
+  end
+
   def delete(%Empty{}, _) do
     %Empty{}
   end
@@ -251,9 +287,26 @@ defmodule WitchcraftersPlay.Tree23 do
                                               Node1.new(key, Node3.new(lk, mrk, key, l, r, node))
                                         end
         _ -> %{tree | right: returned_node, max_right_key: returned_node.max_right_key}
+      end
     end
   end
-  end
 
-
+  def delete(tree = %Node3{left: left, middle:  middle, right: right}, delete_key) do
+    direction = descent_direction(tree, delete_key)
+    new_node = delete(Map.get(tree, direction), delete_key)
+    case direction do
+      :left -> case new_node do
+                 %Node1{} -> rebalance_delete_3(new_node, middle, right)
+                 _ -> %{tree | left: new_node, lower_key: new_node.max_right_key}
+               end
+      :middle -> case new_node do
+                   %Node1{} -> rebalance_delete_3(left, new_node, right)
+                 _ -> %{tree | middle: new_node, upper_key: new_node.max_right_key}
+                 end
+      :right -> case new_node  do
+                  %Node1{} -> rebalance_delete_3(left, middle, new_node)
+                  _ -> %{tree | right: new_node, max_right_key: new_node.max_right_key}
+                end
+    end
   end
+end

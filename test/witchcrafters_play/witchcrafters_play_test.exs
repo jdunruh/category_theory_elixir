@@ -709,4 +709,130 @@ defmodule WitchcraftersPlayTest do
                                                right: %Tree23.Leaf{key: 6, value: "c"}, lower_key: 5, max_right_key: 6}, lower_key: 4,  max_right_key: 6}
         end
 
+        test "delete with 1 node to left of 2 node in upward phase" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+                                             middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"}, right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, max_right_key: 7},
+                                             right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 1) ==
+            %Tree23.Node2{left: %Tree23.Node3{left: %Tree23.Leaf{key: 3, value: "b"},
+                                              middle: %Tree23.Leaf{key: 5, value: "c"},
+                                              right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 3, upper_key: 5, max_right_key: 7},
+                          right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                                              lower_key: 7, max_right_key: 11}
+        end
+
+        test "delete with 2 node to left of 1 node in upward phase" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+                                             middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"}, right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, max_right_key: 7},
+                                             right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 5) ==
+            %Tree23.Node2{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"},
+                                              middle: %Tree23.Leaf{key: 3, value: "b"},
+                                              right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 1, upper_key: 3, max_right_key: 7},
+                          right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                                              lower_key: 7, max_right_key: 11}
+        end
+
+        test "delete with 2 node to left of 1 node in upward phase, 1 node on right" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+                                             middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"}, right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, max_right_key: 7},
+                                             right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 11) ==
+             %Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+                           right: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 7, value: "d"}, right: %Tree23.Leaf{key: 9, value: "e"},
+                                                lower_key: 5, upper_key: 7, max_right_key: 9},
+                           lower_key: 3, max_right_key: 9}
+        end
+
+        test "delete with 3 node to left of 1 node in upward phase, 1 node on right" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+                                             middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"},
+                                                                   middle: %Tree23.Leaf{key: 6, value: "g"},
+                                                                   right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
+                                             right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 11) ==
+            %Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+                          middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"}, right: %Tree23.Leaf{key: 6, value: "g"}, lower_key: 5, max_right_key: 6},
+                           right: %Tree23.Node2{left: %Tree23.Leaf{key: 7, value: "d"}, right: %Tree23.Leaf{key: 9, value: "e"}, lower_key: 7, max_right_key: 9},
+                           lower_key: 3, upper_key: 6, max_right_key: 9}
+        end
+
+        test "delete with 3 node to right of 1 node in upward phase, 1 node on left" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+                                             middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"},
+                                                                   middle: %Tree23.Leaf{key: 6, value: "g"},
+                                                                   right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
+                                             right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 3) ==
+            %Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 5, value: "c"}, lower_key: 1, max_right_key: 5},
+                          middle: %Tree23.Node2{left: %Tree23.Leaf{key: 6, value: "g"}, right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 6, max_right_key: 7},
+                           right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                           lower_key: 5, upper_key: 7, max_right_key: 11}
+        end
+
+        test "delete with 3 node to left of 1 node in upward phase, 1 node in middle" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+                                                                 right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
+                                             middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"},
+                                                                   right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, max_right_key: 7},
+                                             right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 7) ==
+            %Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 2, value: "g"}, lower_key: 1, max_right_key: 2},
+                          middle: %Tree23.Node2{left: %Tree23.Leaf{key: 3, value: "b"}, right: %Tree23.Leaf{key: 5, value: "c"}, lower_key: 3, max_right_key: 5},
+                           right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
+                           lower_key: 2, upper_key: 5, max_right_key: 11}
+        end
+
+        test "delete with 3 node in middle" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+                                                                 right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
+                                             middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 6, value: "h"},
+                                                                   right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
+                                             right: %Tree23.Node3{left: %Tree23.Leaf{key: 9, value: "e"}, middle: %Tree23.Leaf{key: 10, value: "i"},
+                                                                  right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, upper_key: 10, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 7) ==
+            %Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+                                              right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
+                          middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"}, right: %Tree23.Leaf{key: 6, value: "h"},
+                                                lower_key: 5,  max_right_key: 6},
+                          right: %Tree23.Node3{left: %Tree23.Leaf{key: 9, value: "e"}, middle: %Tree23.Leaf{key: 10, value: "i"},
+                                               right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, upper_key: 10, max_right_key: 11},
+                          lower_key: 3, upper_key: 6, max_right_key: 11}
+        end
+
+        test "delete with 3 node on the left" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+                                                                 right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
+                                             middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 6, value: "h"},
+                                                                   right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
+                                             right: %Tree23.Node3{left: %Tree23.Leaf{key: 9, value: "e"}, middle: %Tree23.Leaf{key: 10, value: "i"},
+                                                                  right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, upper_key: 10, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 3) ==
+            %Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 2, value: "g"},
+                                              lower_key: 1, max_right_key: 2},
+                          middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 6, value: "h"},
+                                                right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
+                          right: %Tree23.Node3{left: %Tree23.Leaf{key: 9, value: "e"}, middle: %Tree23.Leaf{key: 10, value: "i"},
+                                               right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, upper_key: 10, max_right_key: 11},
+                          lower_key: 2, upper_key: 7, max_right_key: 11}
+        end
+
+        test "delete with 3 node on the right" do
+          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+                                                                 right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
+                                             middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 6, value: "h"},
+                                                                   right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
+                                             right: %Tree23.Node3{left: %Tree23.Leaf{key: 9, value: "e"}, middle: %Tree23.Leaf{key: 10, value: "i"},
+                                                                  right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, upper_key: 10, max_right_key: 11},
+                                             lower_key: 3, upper_key: 7, max_right_key: 11}, 11) ==
+            %Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+                                                                  right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
+                          middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 6, value: "h"},
+                                                right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
+                          right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 10, value: "i"},
+                                               lower_key: 9, max_right_key: 10},
+                          lower_key: 3, upper_key: 7, max_right_key: 10}
+        end
+
+
 end
