@@ -235,11 +235,11 @@ defmodule WitchcraftersPlay.Tree23 do
     Node3.new(left.upper_key, middle.key, right.max_right_key ,Node2.new(left.lower_key, left.upper_key, left.left, left.middle), Node2.new(left.max_right_key, middle.key,left.right, middle.node), right)
   end
 
-  def delete(%Empty{}, _) do
+  def delete_prime(%Empty{}, _) do
     %Empty{}
   end
 
-  def delete(tree = %Leaf{key: key, value: _}, delete_key) do
+  def delete_prime(tree = %Leaf{key: key, value: _}, delete_key) do
     if(compare(key, delete_key) == :equal) do
       %Empty{}
     else
@@ -247,7 +247,7 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
-  def delete(tree = %Node2{left: %Leaf{} = left, right: %Leaf{} = right, lower_key: lk, max_right_key: mrk}, delete_key) do
+  def delete_prime(tree = %Node2{left: %Leaf{} = left, right: %Leaf{} = right, lower_key: lk, max_right_key: mrk}, delete_key) do
     cond do
       compare(delete_key, lk) == :equal ->
         Node1.new(mrk, right)
@@ -257,7 +257,7 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
-  def delete(tree = %Node3{left: %Leaf{} = left, middle: %Leaf{} = middle, right: %Leaf{} = right, lower_key: lk, upper_key: uk, max_right_key: mrk}, delete_key) do
+  def delete_prime(tree = %Node3{left: %Leaf{} = left, middle: %Leaf{} = middle, right: %Leaf{} = right, lower_key: lk, upper_key: uk, max_right_key: mrk}, delete_key) do
     cond do
       compare(delete_key, lk) == :equal -> Node2.new(uk, mrk, middle, right)
       compare(delete_key, uk) == :equal -> Node2.new(lk, mrk, left, right)
@@ -266,10 +266,10 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
-  def delete(tree = %Node2{left: left, right: right, lower_key: lower_key, max_right_key: _}, delete_key) do
+  def delete_prime(tree = %Node2{left: left, right: right, lower_key: lower_key, max_right_key: _}, delete_key) do
     key_comparison = compare(delete_key, lower_key)
     if key_comparison == :lesser || key_comparison == :equal do
-      case returned_node = delete(left, delete_key) do
+      case returned_node = delete_prime(left, delete_key) do
         %Node1{key: key, node: node} -> case right  do
                                           %Node3{left: l, middle: m, right: r, lower_key: lk, upper_key: uk, max_right_key: mrk} ->
                                             Node2.new(lk, mrk, Node2.new(key, lk, node, l), Node2.new(uk, mrk, m, r))
@@ -279,7 +279,7 @@ defmodule WitchcraftersPlay.Tree23 do
           _ -> %{tree | left: returned_node, lower_key: returned_node.max_right_key}
       end
     else
-      case returned_node = delete(right, delete_key) do
+      case returned_node = delete_prime(right, delete_key) do
         %Node1{key: key, node: node} -> case left do
                                            %Node3{left: l, middle: m, right: r, lower_key: lk, upper_key: uk, max_right_key: mrk} ->
                                               Node2.new(uk, node.key, Node2.new(lk, uk, l, m), Node2.new(mrk, node.key, r, node))
@@ -291,9 +291,9 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
-  def delete(tree = %Node3{left: left, middle:  middle, right: right}, delete_key) do
+  def delete_prime(tree = %Node3{left: left, middle:  middle, right: right}, delete_key) do
     direction = descent_direction(tree, delete_key)
-    new_node = delete(Map.get(tree, direction), delete_key)
+    new_node = delete_prime(Map.get(tree, direction), delete_key)
     case direction do
       :left -> case new_node do
                  %Node1{} -> rebalance_delete_3(new_node, middle, right)

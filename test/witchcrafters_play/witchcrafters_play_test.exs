@@ -595,44 +595,44 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "deleting from an empty tree returns an empty tree" do
-          assert Tree23.delete(%Tree23.Empty{}, :xyz) == %Tree23.Empty{}
+          assert Tree23.delete_prime(%Tree23.Empty{}, :xyz) == %Tree23.Empty{}
         end
 
         test "deleting a key not in a leaf returns the original tree" do
-          assert Tree23.delete(%Tree23.Leaf{key: 3, value: 5}, 6) == %Tree23.Leaf{key: 3, value: 5}
+          assert Tree23.delete_prime(%Tree23.Leaf{key: 3, value: 5}, 6) == %Tree23.Leaf{key: 3, value: 5}
         end
 
         test "deleting the key from a leaf returns empty" do
-          assert Tree23.delete(%Tree23.Leaf{key: 3, value: 5}, 3) == %Tree23.Empty{}
+          assert Tree23.delete_prime(%Tree23.Leaf{key: 3, value: 5}, 3) == %Tree23.Empty{}
         end
 
         test "deleting a leaf child from a 2 node returns a 1 node" do
-          assert Tree23.delete(%Tree23.Node2{left: %Tree23.Leaf{key: 3, value: 5},
+          assert Tree23.delete_prime(%Tree23.Node2{left: %Tree23.Leaf{key: 3, value: 5},
                                              right: %Tree23.Leaf{key: 6, value: 2},
                                              lower_key: 3, max_right_key: 6}, 3) ==
             %Tree23.Node1{node: %Tree23.Leaf{key: 6, value: 2}, key: 6}
-          assert Tree23.delete(%Tree23.Node2{left: %Tree23.Leaf{key: 3, value: 5},
+          assert Tree23.delete_prime(%Tree23.Node2{left: %Tree23.Leaf{key: 3, value: 5},
                                              right: %Tree23.Leaf{key: 6, value: 2},
                                              lower_key: 3, max_right_key: 6}, 6) ==
             %Tree23.Node1{node: %Tree23.Leaf{key: 3, value: 5}, key: 3}
         end
 
         test "deleting a leaf child from a 3 node returns a 2 node" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Leaf{key: 3, value: 5},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Leaf{key: 3, value: 5},
                                              middle: %Tree23.Leaf{key: 5, value: 7},
                                              right: %Tree23.Leaf{key: 6, value: 2},
                                              lower_key: 3, upper_key: 5, max_right_key: 6}, 3) ==
             %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: 7},
                           right: %Tree23.Leaf{key: 6, value: 2},
                           lower_key: 5, max_right_key: 6}
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Leaf{key: 3, value: 5},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Leaf{key: 3, value: 5},
                                              middle: %Tree23.Leaf{key: 5, value: 7},
                                              right: %Tree23.Leaf{key: 6, value: 2},
                                              lower_key: 3, upper_key: 5, max_right_key: 6}, 5) ==
             %Tree23.Node2{left: %Tree23.Leaf{key: 3, value: 5},
                           right: %Tree23.Leaf{key: 6, value: 2},
                           lower_key: 3, max_right_key: 6}
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Leaf{key: 3, value: 5},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Leaf{key: 3, value: 5},
                                              middle: %Tree23.Leaf{key: 5, value: 7},
                                              right: %Tree23.Leaf{key: 6, value: 2},
                                              lower_key: 3, upper_key: 5, max_right_key: 6}, 6) ==
@@ -642,7 +642,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "deleting from the left side of a 2 node, node1 comes in upward phase, 2 node to right" do
-          assert Tree23.delete(%Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 2, value: "a"},
+          assert Tree23.delete_prime(%Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 2, value: "a"},
                                                                 right: %Tree23.Leaf{key: 4, value: "b"}, lower_key: 2, max_right_key: 4},
                                             right: %Tree23.Node2{left: %Tree23.Leaf{key: 6, value: "c"},
                                                                  right: %Tree23.Leaf{key: 8, value: "d"}, lower_key: 6, max_right_key: 8}, lower_key: 6 ,max_right_key: 8}, 2) ==
@@ -652,7 +652,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "deleting from the right side of a 2 node, node1 comes in upward phase, 2 node to left" do
-          assert Tree23.delete(%Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 2, value: "a"},
+          assert Tree23.delete_prime(%Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 2, value: "a"},
                                                                  right: %Tree23.Leaf{key: 4, value: "b"}, lower_key: 2, max_right_key: 4},
                                              right: %Tree23.Node2{left: %Tree23.Leaf{key: 6, value: "c"},
                                                                   right: %Tree23.Leaf{key: 8, value: "d"}, lower_key: 6, max_right_key: 8}, lower_key: 6 ,max_right_key: 8}, 8) ==
@@ -662,7 +662,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "deleting from the left side of a 2 node, other than node1 comes in upward phase, node 2 to right" do
-          assert Tree23.delete(%Tree23.Node2{left: %Tree23.Node3{left: %Tree23.Leaf{key: 2, value: "a"},
+          assert Tree23.delete_prime(%Tree23.Node2{left: %Tree23.Node3{left: %Tree23.Leaf{key: 2, value: "a"},
                                                                  middle: %Tree23.Leaf{key: 4, value: "b"},
                                                                  right: %Tree23.Leaf{key: 5, value: "f"}, lower_key: 2, upper_key: 4, max_right_key: 5},
                                              right: %Tree23.Node2{left: %Tree23.Leaf{key: 6, value: "c"},
@@ -674,7 +674,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "deleting from the right side of a 2 node, other than node1 comes in upward phase, node 2 to left" do
-          assert Tree23.delete(%Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 2, value: "a"},
+          assert Tree23.delete_prime(%Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 2, value: "a"},
                                                                  right: %Tree23.Leaf{key: 4, value: "b"}, lower_key: 2, max_right_key: 4},
                                              right: %Tree23.Node3{left: %Tree23.Leaf{key: 6, value: "c"},
                                                                   middle: %Tree23.Leaf{key: 8, value: "d"},
@@ -686,7 +686,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "deleting from the left side of a 2 node, node1 comes in upward phase, 3 node to right" do
-          assert Tree23.delete(%Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 2, value: "a"},
+          assert Tree23.delete_prime(%Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 2, value: "a"},
                                                                  right: %Tree23.Leaf{key: 4, value: "b"}, lower_key: 2, max_right_key: 4},
                                              right: %Tree23.Node3{left: %Tree23.Leaf{key: 6, value: "c"},
                                                                   middle: %Tree23.Leaf{key: 8, value: "d"},
@@ -698,7 +698,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "deleting from the right side of a 2 node, node1 comes in upward phase, 3 node to left" do
-          assert Tree23.delete(%Tree23.Node2{left: %Tree23.Node3{left: %Tree23.Leaf{key: 2, value: "a"},
+          assert Tree23.delete_prime(%Tree23.Node2{left: %Tree23.Node3{left: %Tree23.Leaf{key: 2, value: "a"},
                                                                  middle: %Tree23.Leaf{key: 4, value: "b"},
                                                                  right: %Tree23.Leaf{key: 5, value: "f"}, lower_key: 2, upper_key: 4, max_right_key: 5},
                                              right: %Tree23.Node2{left: %Tree23.Leaf{key: 6, value: "c"},
@@ -710,7 +710,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 1 node to left of 2 node in upward phase" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
                                              middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"}, right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, max_right_key: 7},
                                              right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
                                              lower_key: 3, upper_key: 7, max_right_key: 11}, 1) ==
@@ -722,7 +722,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 2 node to left of 1 node in upward phase" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
                                              middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"}, right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, max_right_key: 7},
                                              right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
                                              lower_key: 3, upper_key: 7, max_right_key: 11}, 5) ==
@@ -734,7 +734,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 2 node to left of 1 node in upward phase, 1 node on right" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
                                              middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"}, right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, max_right_key: 7},
                                              right: %Tree23.Node2{left: %Tree23.Leaf{key: 9, value: "e"}, right: %Tree23.Leaf{key: 11, value: "f"}, lower_key: 9, max_right_key: 11},
                                              lower_key: 3, upper_key: 7, max_right_key: 11}, 11) ==
@@ -745,7 +745,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 3 node to left of 1 node in upward phase, 1 node on right" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
                                              middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"},
                                                                    middle: %Tree23.Leaf{key: 6, value: "g"},
                                                                    right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
@@ -758,7 +758,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 3 node to right of 1 node in upward phase, 1 node on left" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"}, right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, max_right_key: 3},
                                              middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"},
                                                                    middle: %Tree23.Leaf{key: 6, value: "g"},
                                                                    right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
@@ -771,7 +771,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 3 node to left of 1 node in upward phase, 1 node in middle" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
                                                                  right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
                                              middle: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"},
                                                                    right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, max_right_key: 7},
@@ -784,7 +784,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 3 node in middle" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
                                                                  right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
                                              middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 6, value: "h"},
                                                                    right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
@@ -801,7 +801,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 3 node on the left" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
                                                                  right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
                                              middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 6, value: "h"},
                                                                    right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
@@ -818,7 +818,7 @@ defmodule WitchcraftersPlayTest do
         end
 
         test "delete with 3 node on the right" do
-          assert Tree23.delete(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
+          assert Tree23.delete_prime(%Tree23.Node3{left: %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"}, middle: %Tree23.Leaf{key: 2, value: "g"},
                                                                  right: %Tree23.Leaf{key: 3, value: "b"}, lower_key: 1, upper_key: 2, max_right_key: 3},
                                              middle: %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"}, middle: %Tree23.Leaf{key: 6, value: "h"},
                                                                    right: %Tree23.Leaf{key: 7, value: "d"}, lower_key: 5, upper_key: 6, max_right_key: 7},
