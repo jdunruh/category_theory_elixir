@@ -199,6 +199,36 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
+  # Version of get that returns Just(value) or Nothing
+  def mget(%Empty{}, _), do: %Algae.Maybe.Nothing{}
+
+  def mget(%Leaf{key: leaf_key, value: value}, key) when leaf_key == key, do: %Algae.Maybe.Just{just: value}
+
+  def mget(%Leaf{key: leaf_key, value: _value}, key) when leaf_key != key, do: %Algae.Maybe.Nothing{}
+
+  def mget(%Node2{lower_key: lower_key, max_right_key: max_right_key, right: right, left: left}, key) do
+    case {compare(key, lower_key), compare(key, max_right_key)} do
+      {:lesser, _} -> mget(left, key)
+      {:equal, _} -> mget(left, key)
+      {_, :equal} -> mget(right, key)
+      {_, :greater} -> %Algae.Maybe.Nothing{}
+      {_, :lesser} -> mget(right, key)
+    end
+  end
+
+  def mget(%Node3{lower_key: lower_key, upper_key: upper_key,
+                 max_right_key: max_right_key, right: right, middle: middle, left: left}, key) do
+    case {compare(key, lower_key), compare(key, upper_key), compare(key, max_right_key)} do
+      {:lesser, _, _} -> mget(left, key)
+      {:equal, _, _} -> mget(left, key)
+      {_, :equal, _} -> mget(middle, key)
+      {_, :lesser, _} -> mget(middle, key)
+      {_, _, :equal} -> mget(right, key)
+      {_, _, :greater} -> %Algae.Maybe.Nothing{}
+      {_, _, :lesser} -> mget(right, key)
+    end
+  end
+
   def descent_direction(%Node3{lower_key: lower_key, upper_key: upper_key, max_right_key: max_right_key}, key) do
     case {compare(key, lower_key), compare(key, upper_key), compare(key, max_right_key)} do
       {:lesser, _, _} -> :left

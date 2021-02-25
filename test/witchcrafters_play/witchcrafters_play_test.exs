@@ -1,5 +1,6 @@
 defmodule WitchcraftersPlayTest do
   alias WitchcraftersPlay.Tree23
+  import Algae
   use ExUnitProperties
   use  WitchcraftersPlay.TreeCase
 
@@ -592,6 +593,68 @@ defmodule WitchcraftersPlayTest do
                                            middle: %Tree23.Leaf{key: 7, value: "b"},
                                            right: %Tree23.Leaf{key: 9, value: "c"},
                                            lower_key: 5, upper_key: 7, max_right_key: 9}, 10) == nil
+        end
+
+        # test mget - version of get that returns a Maybe
+        test "mget on an empty tree returns nil" do
+          assert Tree23.mget(%Tree23.Empty{}, :c) == %Algae.Maybe.Nothing{}
+        end
+
+        test "mget on a Leaf with the wrong key returns nil" do
+          assert Tree23.mget(%Tree23.Leaf{key: :a, value: 5}, :b) == %Algae.Maybe.Nothing{}
+        end
+
+        test "mget on a Leaf with the right key returns the value" do
+          assert Tree23.mget(%Tree23.Leaf{key: :a, value: 5}, :a) == %Algae.Maybe.Just{just: 5}
+        end
+
+        test "mget values from a 2 node" do
+          assert Tree23.mget(%Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "a"},
+                                          right: %Tree23.Leaf{key: 7, value: "b"},
+                                          lower_key: 5, max_right_key: 7}, 5) == %Algae.Maybe.Just{just: "a"}
+          assert Tree23.mget(%Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "a"},
+                                          right: %Tree23.Leaf{key: 7, value: "b"},
+                                           lower_key: 5, max_right_key: 7}, 6) == %Algae.Maybe.Nothing{}
+          assert Tree23.mget(%Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "a"},
+                                          right: %Tree23.Leaf{key: 7, value: "b"},
+                                           lower_key: 5, max_right_key: 7}, 3) == %Algae.Maybe.Nothing{}
+          assert Tree23.mget(%Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "a"},
+                                          right: %Tree23.Leaf{key: 7, value: "b"},
+                                          lower_key: 5, max_right_key: 7}, 7) == %Algae.Maybe.Just{just: "b"}
+          assert Tree23.mget(%Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "a"},
+                                          right: %Tree23.Leaf{key: 7, value: "b"},
+                                           lower_key: 5, max_right_key: 7}, 9) == %Algae.Maybe.Nothing{}
+        end
+
+        test "mget values from a 3 node" do
+          assert Tree23.mget(%Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "a"},
+                                           middle: %Tree23.Leaf{key: 7, value: "b"},
+                                           right: %Tree23.Leaf{key: 9, value: "c"},
+                                           lower_key: 5, upper_key: 7, max_right_key: 9}, 3) == %Algae.Maybe.Nothing{}
+          assert Tree23.mget(%Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "a"},
+                                           middle: %Tree23.Leaf{key: 7, value: "b"},
+                                           right: %Tree23.Leaf{key: 9, value: "c"},
+                                           lower_key: 5, upper_key: 7, max_right_key: 9}, 5) == %Algae.Maybe.Just{just: "a"}
+          assert Tree23.mget(%Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "a"},
+                                           middle: %Tree23.Leaf{key: 7, value: "b"},
+                                           right: %Tree23.Leaf{key: 9, value: "c"},
+                                           lower_key: 5, upper_key: 7, max_right_key: 9}, 6) == %Algae.Maybe.Nothing{}
+          assert Tree23.mget(%Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "a"},
+                                           middle: %Tree23.Leaf{key: 7, value: "b"},
+                                           right: %Tree23.Leaf{key: 9, value: "c"},
+                                           lower_key: 5, upper_key: 7, max_right_key: 9}, 7) == %Algae.Maybe.Just{just: "b"}
+          assert Tree23.mget(%Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "a"},
+                                           middle: %Tree23.Leaf{key: 7, value: "b"},
+                                           right: %Tree23.Leaf{key: 9, value: "c"},
+                                           lower_key: 5, upper_key: 7, max_right_key: 9}, 8) == %Algae.Maybe.Nothing{}
+          assert Tree23.mget(%Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "a"},
+                                           middle: %Tree23.Leaf{key: 7, value: "b"},
+                                           right: %Tree23.Leaf{key: 9, value: "c"},
+                                           lower_key: 5, upper_key: 7, max_right_key: 9}, 9) == %Algae.Maybe.Just{just: "c"}
+          assert Tree23.mget(%Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "a"},
+                                           middle: %Tree23.Leaf{key: 7, value: "b"},
+                                           right: %Tree23.Leaf{key: 9, value: "c"},
+                                           lower_key: 5, upper_key: 7, max_right_key: 9}, 10) == %Algae.Maybe.Nothing{}
         end
 
         test "deleting from an empty tree returns an empty tree" do
