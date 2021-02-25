@@ -924,5 +924,33 @@ defmodule WitchcraftersPlayTest do
                           lower_key: 3, upper_key: 7, max_right_key: 10}
         end
 
+        test "from_list/1 builds a tree" do
+          assert Tree23.from_list([{1, "a"}, {3, "b"}, {2, "c"}]) == %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"},
+                                                                                   middle: %Tree23.Leaf{key: 2, value: "c"},
+                                                                                   right: %Tree23.Leaf{key: 3, value: "b"},
+                                                                                   lower_key: 1, upper_key: 2, max_right_key: 3}
+        end
 
+        test "from_list/2 builds a tree" do
+          assert Tree23.from_list(%Tree23.Empty{}, [{1, "a"}, {3, "b"}, {2, "c"}]) == %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"},
+                                                                                   middle: %Tree23.Leaf{key: 2, value: "c"},
+                                                                                   right: %Tree23.Leaf{key: 3, value: "b"},
+                                                                                                    lower_key: 1, upper_key: 2, max_right_key: 3}
+          assert Tree23.from_list(%Tree23.Empty{}, []) == %Tree23.Empty{}
+          assert Tree23.from_list(%Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"},
+                                                middle: %Tree23.Leaf{key: 2, value: "c"},
+                                                right: %Tree23.Leaf{key: 3, value: "b"},
+                                                lower_key: 1, upper_key: 2, max_right_key: 3}, []) ==
+            %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"},
+                          middle: %Tree23.Leaf{key: 2, value: "c"},
+                          right: %Tree23.Leaf{key: 3, value: "b"},
+                          lower_key: 1, upper_key: 2, max_right_key: 3}
+        assert Tree23.from_list(%Tree23.Node2{left: %Tree23.Leaf{key: 1, value: "a"},
+                                              right: %Tree23.Leaf{key: 3, value: "b"},
+                                              lower_key: 1, max_right_key: 3}, [{2, "c"}]) ==
+          %Tree23.Node3{left: %Tree23.Leaf{key: 1, value: "a"},
+                        middle: %Tree23.Leaf{key: 2, value: "c"},
+                        right: %Tree23.Leaf{key: 3, value: "b"},
+                        lower_key: 1, upper_key: 2, max_right_key: 3}
+        end
 end

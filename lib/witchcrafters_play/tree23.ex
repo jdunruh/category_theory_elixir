@@ -1,9 +1,15 @@
 defmodule WitchcraftersPlay.Tree23 do
-  @moduledoc false
+  @moduledoc """
+  A dictionary or map implemented as a 2-3 tree.
+  """
 
   import Algae
   use Witchcraft, except: [to_list: 1]
   alias WitchcraftersPlay.Tree23.{Empty, Node1, Node2, Node3, Node4, Leaf}
+
+  # Data types to be used in the 2-3 tree. Node1 and Node4 are used to send up info in the upward
+  # phase. Node2 and Node3 are the only ones that are actually stored in the tree.
+  # Leaf is used to represent leaf nodes. Data is stored only in leaf nodes.
 
   defsum do
     defdata(Empty :: none())
@@ -141,6 +147,7 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
+  @doc "put data into a tree - put(tree, key, value), returns tree with new value inserted."
   def put(tree, key, value) do
     case new_tree = insert(tree, key, value) do
        %Node4{left: l, lower_middle: lm, upper_middle: um, right: r, middle_key: mk, lower_key: lk, upper_key: uk, max_right_key: mrk} ->
@@ -149,6 +156,7 @@ defmodule WitchcraftersPlay.Tree23 do
     end
   end
 
+  @doc "convert a tree to a list - to_list(tree) returns a list of key/value tuples {key, value}"
   def to_list(%Empty{}) do
     []
   end
@@ -170,6 +178,11 @@ defmodule WitchcraftersPlay.Tree23 do
     IO.inspect(tree)
   end
 
+  def to_ordered_list(tree) do
+    to_list(tree)
+  end
+
+  @doc "get(tree, key) gets the value associated with key, returns nil if key is not in tree"
   def get(%Empty{}, _), do: nil
 
   def get(%Leaf{key: leaf_key, value: value}, key) when leaf_key == key, do: value
@@ -200,6 +213,7 @@ defmodule WitchcraftersPlay.Tree23 do
   end
 
   # Version of get that returns Just(value) or Nothing
+  @doc "mget(tree, key) gets the value associated with key, returns Just{just: value} if key iis found and Nothing if key is not found"
   def mget(%Empty{}, _), do: %Algae.Maybe.Nothing{}
 
   def mget(%Leaf{key: leaf_key, value: value}, key) when leaf_key == key, do: %Algae.Maybe.Just{just: value}
@@ -265,6 +279,7 @@ defmodule WitchcraftersPlay.Tree23 do
     Node3.new(left.upper_key, middle.key, right.max_right_key ,Node2.new(left.lower_key, left.upper_key, left.left, left.middle), Node2.new(left.max_right_key, middle.key,left.right, middle.node), right)
   end
 
+  @doc "delete(tree, key) - deletes entry associated with key from the tree. There is no change if key is not found."
   def delete(tree, delete_key) do
     case new_tree = delete_prime(tree, delete_key) do
       %Node1{} -> new_tree.node
@@ -345,5 +360,27 @@ defmodule WitchcraftersPlay.Tree23 do
                   _ -> %{tree | right: new_node, max_right_key: new_node.max_right_key}
                 end
     end
+  end
+
+  @doc "from_list(tree, list) create (or add to) a tree from a list of tuples {key, value}, returns the tree"
+  def from_list(%Empty{}, []) do
+    %Empty{}
+  end
+
+  def from_list(tree, []) do
+    tree
+  end
+
+  def from_list(tree, [head | []]) do
+    put(tree, elem(head, 0), elem(head,1))
+  end
+
+  def from_list(tree, [head | tail]) do
+    from_list(put(tree, elem(head,0), elem(head, 1)), tail)
+  end
+
+  @doc "from_list(list) create a tree from a list of tuples {key, value}"
+  def from_list(list) do
+    from_list(%Empty{}, list)
   end
 end
