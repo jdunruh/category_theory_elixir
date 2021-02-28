@@ -952,5 +952,31 @@ defmodule WitchcraftersPlayTest do
                         middle: %Tree23.Leaf{key: 2, value: "c"},
                         right: %Tree23.Leaf{key: 3, value: "b"},
                         lower_key: 1, upper_key: 2, max_right_key: 3}
+
         end
+
+        test "append two trees" do
+          assert Tree23.append(%Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "a"},
+                                             right: %Tree23.Leaf{key: 7, value: "b"}, lower_key: 5, max_right_key: 7},
+            %Tree23.Node3{left: %Tree23.Leaf{key: 9, value: "c"},
+                          middle: %Tree23.Leaf{key: 11, value: "d"},
+                          right: %Tree23.Leaf{key: 13, value: "e"}, lower_key: 9, upper_key: 11, max_right_key: 13}) ==
+            %Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "a"},
+                                              right: %Tree23.Leaf{key: 7, value: "b"}, lower_key: 5, max_right_key: 7},
+                          right: %Tree23.Node3{left: %Tree23.Leaf{key: 9, value: "c"},
+                                               middle: %Tree23.Leaf{key: 11, value: "d"},
+                                               right: %Tree23.Leaf{key: 13, value: "e"}, lower_key: 9, upper_key: 11, max_right_key: 13}, lower_key: 7, max_right_key: 13}
+
+          assert Tree23.append(%Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "a"},
+                                             right: %Tree23.Leaf{key: 7, value: "b"}, lower_key: 5, max_right_key: 7},
+            %Tree23.Node3{left: %Tree23.Leaf{key: 5, value: "c"},
+                          middle: %Tree23.Leaf{key: 11, value: "d"},
+                          right: %Tree23.Leaf{key: 13, value: "e"}, lower_key: 5, upper_key: 11, max_right_key: 13}) ==
+            %Tree23.Node2{left: %Tree23.Node2{left: %Tree23.Leaf{key: 5, value: "c"},
+                                              right: %Tree23.Leaf{key: 7, value: "b"}, lower_key: 5, max_right_key: 7},
+                          right: %Tree23.Node2{
+                                               left: %Tree23.Leaf{key: 11, value: "d"},
+                                               right: %Tree23.Leaf{key: 13, value: "e"}, lower_key: 11, max_right_key: 13}, lower_key: 7, max_right_key: 13}
+
+end
 end

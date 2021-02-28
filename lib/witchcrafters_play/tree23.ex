@@ -383,4 +383,23 @@ defmodule WitchcraftersPlay.Tree23 do
   def from_list(list) do
     from_list(%Empty{}, list)
   end
+
+  @doc "equivalent_tree?(tree1, tree2) checks equivalence of keys and values in tree"
+  def equivalent_tree?(tree1, tree2) do
+    list1 = to_list(tree1)
+    list2 = to_list(tree2)
+    Witchcraft.Setoid.equivalent?(list1, list2)
+#    length(list1) == length(list2) && Enum.all?(List.zip([list1, list2]), fn {{k1, v1}, {k2, v2}} -> (compare(k1, k2) == :equal) && (compare(v1,v2) == :equal) end)
+  end
+
+  def equal?(tree1, tree2) do
+    IO.inspect(tree1)
+    IO.inspect(tree2)
+    equivalent_tree?(tree1, tree2)
+  end
+
+  @doc "append(tree1, tree2) appends two trees, returns the appended trees"
+  def append(tree1, tree2) do
+    Enum.reduce(to_list(tree2), tree1, fn {key, val}, acc -> put(acc, key, val) end)
+  end
 end
